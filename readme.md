@@ -20,6 +20,7 @@ npm install -g azure-functions-core-tools
 Set your API key for local dev:
 
 ```bash
+cd api
 func settings add ABLY_API_KEY Your-Ably-Api-Key
 ```
 Running this command will encrypt your API key into the file `/api/local.settings.json`.
