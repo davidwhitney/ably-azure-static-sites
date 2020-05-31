@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Welcome to Azure Static Sites!</title>
+
+    <style>
+      .historyContainer .item {
+        border: 15px solid black;
+        overflow: hidden;
+        padding: 20px;
+      }    
+    </style>
+    
+    <script src="//cdn.ably.io/lib/ably.min-1.js"></script>    
+
+  </head>
+  <body>
+    <header>
+      <h1>Ably Promises API demo with client side auth.</h1>
+    </header>
+
+    <main>
+      <h2>Oh hi, let me just grab some history from Ably!</h2>
+      <div id="history" class="historyContainer"></div>
+    </main>
+
+    <script>
+      (async function () {
+        console.log("Oh hai! 🖤");
+        
+        const resultsDiv = document.getElementById("history");
+        const ably = new Ably.Realtime.Promise({ authUrl: '/api/createTokenRequest' });
+        const channelId = `[product:ably-tfl/tube]tube:northern:940GZZLUEUS:arrivals`;
+        const channel = await ably.channels.get(channelId);
+        await channel.attach();
+        
+        channel.subscribe(function(message) {
+          console.log(message.data);
+        }); 
+        console.log("Subscribed");
+        
+        const resultPage = await channel.history({ untilAttach: true, limit: 1 }); 
+
+        for (const item of resultPage.items) {
+          const result = document.createElement("div");
+          result.classList.add("item");
+          result.innerHTML = JSON.stringify(item);
+          resultsDiv.appendChild(result);
+        }        
+
+      })();
+    </script>    
+    
+  </body>
+</html>
